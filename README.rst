@@ -42,6 +42,7 @@ for documentation
   ``$ make -C docs html``
 
   the html file will be avilable under ``build/sphinx/html/``
+
   make command should be avilable in the system
 
 with python
