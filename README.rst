@@ -43,6 +43,7 @@ for documentation
 
   the html file will be avilable under ``build/sphinx/html/``
   make command should be avilable in the system
+
 with python
 -----------
   ``$ cd  ~/Downloads/mnutree/``
