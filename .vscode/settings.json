@@ -1,0 +1,6 @@
+{
+    "python.pythonPath": "/home/gauravj/projects/pys/noncom/bin/python",
+    "python.linting.enabled": true,
+    "restructuredtext.confPath": "${workspaceFolder}/docs",
+    "python.linting.pylintEnabled": true
+}

@@ -2,4 +2,4 @@
 Contributors
 ============
 
-* Gaurav J <gaurav.joshi@programmer.net>
+* Gaurav J <gaurav.joshi@mastek.com>
