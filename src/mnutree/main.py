@@ -10,8 +10,9 @@
 """
 import sys
 import json
-
+from typing import Any
 from types import SimpleNamespace
+
 from mnutree import info
 from mnutree import parse_args
 from mnutree import setup_logging
@@ -21,7 +22,7 @@ __author__ = "Gaurav J"
 __copyright__ = "Mastek India Pvt. Ltd"
 __license__ = "MIT"
 
-def main(args):
+def main(args: Any) -> None:
     """Main entry point allowing external calls
 
        Parameters
@@ -35,10 +36,10 @@ def main(args):
     setup_logging(args.loglevel)
     info("Starting JSON conversion...")
 
-    file_path, menus = process(args)
-    menus = json.dumps(menus)
+    file_path , menus = process(args)
+    menus_str: str = json.dumps(menus)
     with open(file_path, "w") as json_file:
-        json_file.writelines(menus)
+        json_file.writelines(menus_str)
 
     info("Conversion to JSON ends here")
 

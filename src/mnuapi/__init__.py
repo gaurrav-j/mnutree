@@ -3,23 +3,23 @@
    The file can be uploaded from the swagger-ui
 """
 
-import uvicorn
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI
+import uvicorn # type: ignore
 
-app = FastAPI(title="MenuTree", description="A json menu tree generator from csv file")
+from mnuapi.req_processor import  router
 
-@app.post("/files/")
-async def create_file(file: bytes = File(...)):
-    """The upload file with bytes
+app = FastAPI(title=__name__, description="A json menu tree generator from csv file")
+app.include_router(router, prefix='/v1/mnutree')
+
+@app.get("/health", tags=["health-check"], responses={
+    200: {"description": "api is ok"},
+    400: {"description": "bad request"},
+    500: {"description": "internal server error"}
+})
+def health():
+    """The health check for menu api
     """
-    return {"file_size": len(file)}
-
-@app.post("/uploadfile/")
-async def create_upload_file(file: UploadFile = File(...)):
-    """The upload file with file
-    """
-    return {"filename": file.filename}
-
+    return {"status": "ok"}
 
 def run():
     """Entry point for api server

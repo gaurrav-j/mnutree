@@ -6,6 +6,9 @@
 """
 import re
 from pathlib import Path
+from argparse import Namespace
+from typing import List, Tuple, Dict, Any
+
 from mnutree import info
 
 __author__ = "Gaurav J"
@@ -14,7 +17,7 @@ __license__ = "MIT"
 
 KEYS = "label", "id", "link"
 
-def normallize(line):
+def normallize(line: str) -> str:
     """The function currently removes extra quotes and replaces comma.
        The function uses regex to find a comma in quotes.
        The extra comma in csv file is an issue as it prevents
@@ -25,7 +28,7 @@ def normallize(line):
        line : string
         the line as read from the csv file
     """
-    quotes = re.findall(r'"(.*?)"', line)
+    quotes: List = re.findall(r'"(.*?)"', line)
     if len(quotes) != 0:
         for quote in quotes:
             line = line.replace(quote, quote.replace(",", "\u02cc"))
@@ -35,7 +38,7 @@ def normallize(line):
     return line
 
 
-def process(args):
+def process(args: Namespace) -> Tuple[Path, List]:
     """The main method doing heavy lifting.
        The method to process the csv file
        to the JSON tree structure as required
@@ -51,15 +54,15 @@ def process(args):
         the file path & parent-child dictionary of menus
     """
     if args.csv_file.find("/") > -1:
-        file_path = Path(args.csv_file)
+        file_path: Path = Path(args.csv_file)
     else:
         file_path = Path("./"+args.csv_file)
 
-    menu_list = []
-    object_cache = {}
+    menu_list: List = []
+    object_cache: Dict[str, Any] = {}
 
     with open(file_path, "r") as file:
-        line_count = 0
+        line_count: int = 0
         for line in file:
             line = line.rstrip()
             if line_count == 0:
@@ -68,8 +71,9 @@ def process(args):
             else:
                 line_count += 1
                 line = normallize(line)
-                list_of_items_in_line = [word for word in line.split(',') if word and word != "\n"]
-                len_list_of_items_in_line = len(list_of_items_in_line)
+                list_of_items_in_line: List = [word for word in line.split(',')
+                    if word and word != "\n"]
+                len_list_of_items_in_line: int = len(list_of_items_in_line)
                 info("process: {} . len --> {}, list_of_items_in_line --> {}",
                     line_count, len_list_of_items_in_line, list_of_items_in_line, debug=True)
                 if len_list_of_items_in_line != 0:
@@ -80,7 +84,7 @@ def process(args):
     return file_path.with_suffix('.json'), menu_list
 
 
-def create_menu(list_of_items_in_line, menu_list, object_cache):
+def create_menu(list_of_items_in_line: List, menu_list: List, object_cache: Dict[str, Any]):
     """The method implementing the algo.
        The method takes the list of list_of_items_in_line (menu items)
        and transforms them into lists & dictionary. It
@@ -100,7 +104,7 @@ def create_menu(list_of_items_in_line, menu_list, object_cache):
     info("create_menu: {}", menu_list, debug=True)
 
     list_of_items_in_line.pop(0)
-    item_to_group = 3
+    item_to_group: int = 3
     item_group_list = [list_of_items_in_line[i:i + item_to_group]
         for i in range(0, len(list_of_items_in_line), item_to_group)]
 

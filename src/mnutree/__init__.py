@@ -7,7 +7,8 @@
 import os
 import sys
 import logging
-import argparse
+from argparse import ArgumentParser, Namespace
+from typing import List, Tuple, Sequence, Optional
 
 from pkg_resources import get_distribution, DistributionNotFound
 
@@ -20,7 +21,7 @@ except DistributionNotFound:
 finally:
     del get_distribution, DistributionNotFound
 
-def is_valid_file(parser, arg):
+def is_valid_file(parser: ArgumentParser, arg: str) -> Optional[str]:
     """The method to check if the file path is valid file.
        The file path is provided from command line
     """
@@ -33,7 +34,7 @@ def is_valid_file(parser, arg):
     return None
 
 
-def parse_args(args):
+def parse_args(args: Optional[Sequence[str]]) -> Namespace:
     """Parse command line parameters
 
        Parameters
@@ -46,7 +47,8 @@ def parse_args(args):
        :obj:`argparse.Namespace`
         command line parameters namespace
     """
-    parser = argparse.ArgumentParser(description="The utility to convert structured csv to JSON")
+    parser: ArgumentParser = ArgumentParser(description
+        ="The utility to convert structured csv to JSON")
 
     parser.add_argument(dest="csv_file", help="input csv file with menu data",
                         metavar="FILE", default="data.csv", nargs='?',
@@ -69,7 +71,7 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def setup_logging(loglevel):
+def setup_logging(loglevel: int) -> None:
     """Setup basic logging
 
        Parameters
@@ -77,7 +79,7 @@ def setup_logging(loglevel):
        loglevel: int
         minimum loglevel for emitting messages
     """
-    logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
+    logformat: str = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
 
     logging.basicConfig(
         level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
@@ -86,7 +88,7 @@ def setup_logging(loglevel):
 __logger__ = logging.getLogger(__name__)
 
 # the method is to be evolved furthur
-def info(message, *values, debug=False):
+def info(message: str, *values: object, debug: bool=False) -> None:
     """The unified logging construct
 
       The method to control the logging in the application.
