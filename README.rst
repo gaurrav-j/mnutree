@@ -82,7 +82,16 @@ The ``pwd`` / current directory should have **data.csv** file. The **mnutree** c
 
   ``$ mnutree -v ~/Downloads/xyz.csv``
 
+Docker Local & Production
+=========================
+* The development server is started with ``$ docker-compose up``
+* The production image is created locally with ``$ docker build . --target production -t mnutree``
+* The production image is run as ``$ docker run -p 8080:8080 --env "PORT=8080" -it mnutree``
+
 Note
 ====
+The api uses uvicorn & gunicorn to serve high performance RESTFul requests.
+A multi stage docker set up is created for the API.
+
 This project has been set up using PyScaffold 3.2.3. For details and usage
 information on PyScaffold see https://pyscaffold.org/.
