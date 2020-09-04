@@ -24,6 +24,5 @@ async def test_accept_file():
     """
     async with AsyncClient(app=app, base_url="http://test") as async_client:
         with open("tests/data.csv", "rb") as file:
-            response = await async_client.post("/v1/mnutree/process", files=file)
-    print(response)
+            response = await async_client.post("/v1/mnutree/process", files={"upload-file": file})
     assert response.json() is not None
