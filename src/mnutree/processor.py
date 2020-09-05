@@ -7,7 +7,8 @@
 import re
 from pathlib import Path
 from argparse import Namespace
-from typing import List, Tuple, Dict, Any
+from collections import defaultdict
+from typing import List, Tuple, Dict, DefaultDict, Optional
 
 from mnutree import info
 
@@ -53,15 +54,17 @@ def process(args: Namespace) -> Tuple[Path, List]:
        tuple
         the file path & parent-child dictionary of menus
     """
-    if args.csv_file.find("/") > -1:
-        file_path: Path = Path(args.csv_file)
-    else:
-        file_path = Path("./"+args.csv_file)
+
+    def cache_val() -> Dict:
+        return {}
+
+    file_path: Path = Path(args.csv_file) if args.csv_file.find("/") > -1\
+    else Path("./"+args.csv_file)
 
     menu_list: List = []
-    object_cache: Dict[str, Any] = {}
+    object_cache: DefaultDict[str, Dict] = defaultdict(cache_val)
 
-    with open(file_path, "r") as file:
+    with file_path.open() as file:
         line_count: int = 0
         for line in file:
             line = line.rstrip()
@@ -84,7 +87,8 @@ def process(args: Namespace) -> Tuple[Path, List]:
     return file_path.with_suffix('.json'), menu_list
 
 
-def create_menu(list_of_items_in_line: List, menu_list: List, object_cache: Dict[str, Any]):
+def create_menu(list_of_items_in_line: List, menu_list: List,
+     object_cache: DefaultDict[str, Dict]) -> None:
     """The method implementing the algo.
        The method takes the list of list_of_items_in_line (menu items)
        and transforms them into lists & dictionary. It
@@ -105,55 +109,43 @@ def create_menu(list_of_items_in_line: List, menu_list: List, object_cache: Dict
 
     list_of_items_in_line.pop(0)
     item_to_group: int = 3
-    item_group_list = [list_of_items_in_line[i:i + item_to_group]
+    item_group_list: List = [list_of_items_in_line[i:i + item_to_group]
         for i in range(0, len(list_of_items_in_line), item_to_group)]
 
     for word_list in item_group_list:
-        menu_item = {key: word.replace("\u02cc", ",") if key == KEYS[0] else word
+        menu_item: Dict = {key: word.replace("\u02cc", ",") if key == KEYS[0] else word
             for key, word in zip(KEYS, word_list)}
 
-        pid = parent_id(menu_item, KEYS[2], KEYS[1])
+        pid: str = parent_id(menu_item, KEYS[2], KEYS[1])
 
         if pid is None:
-            item = find(menu_item[KEYS[1]], menu_list)
-            if item is None:
+            cached_item: Dict = object_cache[menu_item[KEYS[1]]]
+            cached_item.setdefault(KEYS[0], menu_item[KEYS[0]])
+            cached_item.setdefault(KEYS[1], menu_item[KEYS[1]])
+            cached_item.setdefault(KEYS[2], menu_item[KEYS[2]])
+
+            root_item: Dict = find(cached_item[KEYS[1]], menu_list)
+            info("root item --> {}", root_item, debug=True)
+            if not root_item:
                 info("create_menu:root: {} --> {}", menu_item[KEYS[1]], menu_item)
-                menu_list.append(menu_item)
-                object_cache[menu_item[KEYS[1]]] = menu_item
+                menu_list.append(cached_item)
         else:
             info("create_menu:child: {} --> {}", menu_item[KEYS[1]], menu_item, debug=True)
 
-            if menu_item[KEYS[1]] in object_cache:
-                cached_item = object_cache[menu_item[KEYS[1]]]
-                cached_item[KEYS[0]] = menu_item[KEYS[0]]
-                cached_item[KEYS[2]] = menu_item[KEYS[2]]
+            cached_item: Dict = object_cache[menu_item[KEYS[1]]]
+            cached_item.setdefault(KEYS[0], menu_item[KEYS[0]])
+            cached_item.setdefault(KEYS[1], menu_item[KEYS[1]])
+            cached_item.setdefault(KEYS[2], menu_item[KEYS[2]])
 
-            if menu_item[KEYS[1]] not in object_cache:
-                object_cache[menu_item[KEYS[1]]] = menu_item
+            parent: Dict = object_cache[pid]
+            parent.setdefault(KEYS[1], pid)
+            parent.setdefault("children", [cached_item])
 
-            if pid not in object_cache:
-                object_cache[pid] =  {
-                    KEYS[0]:'none',
-                    KEYS[1]:f'{pid}',
-                    KEYS[2]:'none'
-                }
-                menu_parent = find(pid, menu_list)
-                if menu_parent is None:
-                    menu_list.append(object_cache[pid])
+            child: Dict = find(cached_item[KEYS[1]], parent["children"])
+            if not child:
+                parent["children"].append(cached_item)
 
-            parent = object_cache[pid]
-            if parent is not None and "children" in parent:
-                child = find(menu_item[KEYS[1]], parent["children"])
-                if child is None:
-                    parent["children"].append(menu_item)
-                    object_cache[parent[KEYS[1]]] = parent
-            else:
-                if parent is not None:
-                    parent["children"] = [menu_item]
-                    object_cache[parent[KEYS[1]]] = parent
-
-
-def parent_id(menu_item, split_attribute, match_attribute):
+def parent_id(menu_item: Dict, split_attribute: str, match_attribute: str) -> Optional[str]:
     """The method to extract parent id.
        The method extracts the parent id from the link
        The last id is the menu item id and the secon last id
@@ -183,7 +175,7 @@ def parent_id(menu_item, split_attribute, match_attribute):
 
     return None
 
-def find(item_id, items):
+def find(item_id: str, items: List[Dict]) -> Optional[Dict]:
     """The method to search item in the list.
        The method finds an item in the list given it's id
 
@@ -199,13 +191,10 @@ def find(item_id, items):
        dictionary
         the representation of the menu item or None
     """
-    for item in items:
-        if "children" in item and len(item["children"]) != 0:
-            child = find(item_id, item["children"])
-            if child is not None:
-                return child
+    if len(items) == 0:
+        return None
 
+    for item in items:
         if item[KEYS[1]] == item_id:
             return item
-
     return None
