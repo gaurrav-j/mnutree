@@ -29,11 +29,11 @@ for pytest
 
   **and fire command**
 
-  ``$ pytest``
+  ``$ pytest -s --cov tests/``
 
   **or**
 
-  ``$ py.test``
+  ``$ py.test -s --cov tests/``
 
 for documentation
 -----------------

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """The test script for the processor module
 """
+from collections import defaultdict
+
 from mnutree.processor import find
 from mnutree.processor import process
 from mnutree.processor import parent_id
@@ -37,23 +39,23 @@ def test_create_menu(menu_item):
         given list of items as extracted from a line in the given csv file
     """
     menu_list = []
-    object_cache = {}
+    object_cache = defaultdict(lambda : {})
 
     list_of_items_in_line = [
         "https://groceries.morrisons.com/browse",
-        menu_item.get('label'),
-        menu_item.get('id'),
-        menu_item.get('link')
+        menu_item['label'],
+        menu_item['id'],
+        menu_item['link']
     ]
 
     create_menu(list_of_items_in_line, menu_list, object_cache)
 
     assert menu_list is not None
     assert object_cache is not None
-    assert menu_list == [{'label': 'none', 'id': '178969', 'link': 'none', 'children': [menu_item]}]
-    assert object_cache == {menu_item.get('id'): menu_item,
-                            '178969': {'label': 'none', 'id': '178969', 'link': 'none',
-                            'children': [menu_item]}}
+
+    assert not menu_list
+    assert object_cache['178975'] == menu_item
+    assert object_cache['178969'] == {'id': '178969', 'children': [menu_item]}
 
 def test_parent_id(menu_item):
     """The method to check if parent id is being properly
@@ -73,6 +75,6 @@ def test_find(menu_item):
     assert parent is not None
     assert parent == {'label': 'none', 'id': '178969', 'link': 'none', 'children': [menu_item]}
 
-    child = find('178975', menu_list)
+    child = find('178975', menu_list[0]['children'])
     assert child is not None
     assert child == menu_item

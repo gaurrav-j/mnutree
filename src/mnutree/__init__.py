@@ -7,15 +7,16 @@
 import os
 import sys
 import logging
+from logging import Logger, getLogger
 from argparse import ArgumentParser, Namespace
-from typing import List, Tuple, Sequence, Optional
+from typing import List, Tuple, Sequence, Optional, TextIO
 
 from pkg_resources import get_distribution, DistributionNotFound
 
 try:
     # Change here if project is renamed and does not equal the package name
-    DIST_NAME = __name__
-    __version__ = get_distribution(DIST_NAME).version
+    DIST_NAME: str = __name__
+    __version__: str = get_distribution(DIST_NAME).version
 except DistributionNotFound:
     __version__ = 'unknown'
 finally:
@@ -28,6 +29,7 @@ def is_valid_file(parser: ArgumentParser, arg: str) -> Optional[str]:
     if not os.path.exists(arg):
         parser.error("The menu file %s does not exist!" % arg)
     else:
+        data_file: TextIO
         with open(arg, 'r') as data_file:
             if data_file.readable:
                 return arg
@@ -85,7 +87,7 @@ def setup_logging(loglevel: int) -> None:
         level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
     )
 
-__logger__ = logging.getLogger(__name__)
+__logger__ : Logger = getLogger(__name__)
 
 # the method is to be evolved furthur
 def info(message: str, *values: object, debug: bool=False) -> None:

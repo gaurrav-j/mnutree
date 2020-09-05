@@ -10,8 +10,9 @@
 """
 import sys
 import json
-from typing import Any
+from pathlib import Path
 from types import SimpleNamespace
+from typing import List, TextIO, Dict, Union, Any
 
 from mnutree import info
 from mnutree import parse_args
@@ -36,14 +37,20 @@ def main(args: Any) -> None:
     setup_logging(args.loglevel)
     info("Starting JSON conversion...")
 
-    file_path , menus = process(args)
+    menus: List[Dict[str, Union[str, Any]]]
+    file_path: Path
+    json_file: TextIO
+
+    file_path , menus  = process(args)
+
     menus_str: str = json.dumps(menus)
-    with open(file_path, "w") as json_file:
+
+    with file_path.open("w") as json_file:
         json_file.writelines(menus_str)
 
     info("Conversion to JSON ends here")
 
-def run():
+def run() -> None:
     """Entry point for console_scripts
     """
 
