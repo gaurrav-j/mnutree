@@ -5,7 +5,7 @@
 
 from typing import List, TextIO, Dict, Union, Any
 
-from fastapi import FastAPI # type: ignore
+from fastapi.applications import FastAPI
 import uvicorn # type: ignore
 
 from mnuapi.req_processor import  router
@@ -17,7 +17,7 @@ app.include_router(router, prefix='/v1/mnutree')
     200: {"description": "api is ok"},
     400: {"description": "bad request"},
     500: {"description": "internal server error"}
-}) # type: ignore
+})
 def health() -> Dict[str, str]:
     """The health check for menu api
     """

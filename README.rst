@@ -29,11 +29,15 @@ for pytest
 
   **and fire command**
 
-  ``$ pytest -s --cov tests/``
+  ``$ python -m pytest -s --cov tests/``
 
   **or**
 
   ``$ py.test -s --cov tests/``
+
+  **for BDD testing**
+
+  ``$ python -m pytest -s -k "service" ``
 
 for documentation
 -----------------
@@ -44,6 +48,14 @@ for documentation
   the html file will be avilable under ``build/sphinx/html/``
 
   make command should be avilable in the system
+
+for type checking
+-----------------
+  ``$ cd ~/Downloads/mnutree/``
+
+  ``$ mypy src/``
+
+  ``$ mypy --ignore-missing-imports tests/``
 
 with python
 -----------

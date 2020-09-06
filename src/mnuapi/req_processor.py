@@ -38,7 +38,7 @@ async def accept_file(response: Response, uploaded_file: UploadFile = File(...))
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                 detail="The uploaded csv file is empty")
 
-        file = BytesIO(contents)
+        file: BytesIO = BytesIO(contents)
 
         object_cache: DefaultDict[str, Dict[str, Any]] = defaultdict(lambda : {})
 
