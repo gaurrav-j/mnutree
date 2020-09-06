@@ -15,13 +15,15 @@ PyScaffold 3.2.3
 
 The project can be installed to the python virtual environment or python host with command
 
+  ``python -m pip install --upgrade pip``
+
   ``python setup.py install``
 
   This will install the commands to local system
 
   **for distrubation**
 
-  ``pip install wheel``
+  ``pip install -U wheel``
 
   ``python setup.py dists``
 
@@ -72,6 +74,10 @@ for pytest
 
   ``$ python -m pytest -s -k "service" ``
 
+  **for HTML report**
+
+  ``$ pytest --html=report.html --self-contained-html``
+
 for documentation
 -----------------
   ``$ cd ~/Downloads/mnutree/``
@@ -110,7 +116,7 @@ example
 -------
   ``$ mnutree -v``
 
-  The **mnutree** command takes the csv file as command line parameter
+  The **mnutree** command can also takes the csv file as command line parameter like
 
   ``$ mnutree -v ~/Downloads/data.csv``
 
