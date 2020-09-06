@@ -93,7 +93,7 @@ example
 -------
   ``$ mnutree -v``
 
-  The ``pwd`` / current directory should have **data.csv** file. The **mnutree** command takes the csv file as option
+  The **mnutree** command takes the csv file as command line parameter
 
   ``$ mnutree -v ~/Downloads/data.csv``
 
@@ -101,7 +101,7 @@ example
 
   ``$ mnutree -v ~/Downloads/xyz.csv``
 
-  ``$ **mnuapi -v**'' will start the api server. The swagger-ui is located at http://127.0.0.1:5000
+  ``$ **mnuapi -v**`` will start the api server. The swagger-ui is located at http://127.0.0.1:5000/docs
   Please press Ctrl+c to quit the server
 
 Docker Local & Production
