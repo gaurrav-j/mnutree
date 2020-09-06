@@ -16,7 +16,7 @@ HEADER_STR: str = "Base URL,Level 1 - Name,Level 1 - ID,Level 1 - URL,\
     Level 2 - Name,Level 2 - ID,Level 2 URL,Level 3 - Name,Level 3 - ID,Level 3 URL"
 
 # Scenarios
-scenarios('../features/service.feature', example_converters=dict(csv_string=str, json_string=str))
+scenarios('../features', example_converters=dict(csv_string=str, json_string=str))
 
 # Given Steps  scope='session'
 @pytest.mark.asyncio
