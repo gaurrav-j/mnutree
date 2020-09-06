@@ -10,7 +10,7 @@ from argparse import Namespace
 from collections import defaultdict
 from typing import List, Tuple, Dict, DefaultDict, Optional, Any
 
-from mnutree import info
+from mnutree import info, strfile, FILE_STR
 
 __author__ = "Gaurav J"
 __copyright__ = "Mastek India Pvt. Ltd"
@@ -54,8 +54,12 @@ def process(args: Namespace) -> Tuple[Path, List[Dict[str, Any]]]:
        tuple
         the file path & parent-child dictionary of menus
     """
-    file_path: Path = Path(args.csv_file) if args.csv_file.find("/") > -1\
-    else Path("./"+args.csv_file)
+    if args.csv_file.find("/") > -1:
+        file_path: Path = Path(args.csv_file)
+    else:
+        file_name: str
+        with strfile(FILE_STR) as file_name:
+            file_path = Path(file_name)
 
     menu_list: List[Dict[str, Any]] = []
     object_cache: DefaultDict[str, Dict[str, Any]] = defaultdict(lambda : {})
@@ -79,7 +83,12 @@ def process(args: Namespace) -> Tuple[Path, List[Dict[str, Any]]]:
                 if len_list_of_items_in_line != 0:
                     create_menu(list_of_items_in_line, menu_list, object_cache)
 
-    info("process: The file path is {} ", file_path.with_suffix('.json'))
+
+    if file_path.name.find("tmp") > -1:
+        info("process: The file path is {} ", file_path)
+        info("data: {} ", menu_list)
+    else:
+        info("process: The file path is {} ", file_path.with_suffix('.json'))
 
     return file_path.with_suffix('.json'), menu_list
 

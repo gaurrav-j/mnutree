@@ -9,7 +9,9 @@ import sys
 import logging
 from logging import Logger, getLogger
 from argparse import ArgumentParser, Namespace
-from typing import List, Tuple, Sequence, Optional, TextIO
+from typing import List, Tuple, Sequence, Optional, TextIO, Generator
+import tempfile
+from contextlib import contextmanager
 
 from pkg_resources import get_distribution, DistributionNotFound
 
@@ -26,14 +28,17 @@ def is_valid_file(parser: ArgumentParser, arg: str) -> Optional[str]:
     """The method to check if the file path is valid file.
        The file path is provided from command line
     """
-    if not os.path.exists(arg):
+    if not os.path.exists(arg) and arg.find("/") > -1:
         parser.error("The menu file %s does not exist!" % arg)
+        return None
     else:
-        data_file: TextIO
-        with open(arg, 'r') as data_file:
-            if data_file.readable:
-                return arg
-    return None
+        if arg.find("/") > -1:
+            data_file: TextIO
+            with open(arg, 'r') as data_file:
+                if not data_file.readable:
+                    parser.error("The menu file %s is not readable!" % arg)
+                    return None
+    return arg
 
 
 def parse_args(args: Optional[Sequence[str]]) -> Namespace:
@@ -116,3 +121,31 @@ def info(message: str, *values: object, debug: bool=False) -> None:
             __logger__.debug(message.format(*values))
         else:
             __logger__.info(message.format(*values))
+
+
+@contextmanager
+def strfile(data: str) -> Generator:
+    """The temp file context manager
+    """
+    temp = tempfile.NamedTemporaryFile(delete=False)
+    config_path = f'{temp.name}.csv'
+    with open(config_path, 'w') as file:
+        file.write(data)
+    try:
+        yield f'{temp.name}.csv'
+    finally:
+        temp.close()
+        os.unlink(temp.name)
+
+
+FILE_STR = """Base URL,Level 1 - Name,Level 1 - ID,Level 1 - URL,Level 2 - Name,Level 2 - ID,\
+    Level 2 URL,Level 3 - Name,Level 3 - ID,Level 3 URL
+https://groceries.morrisons.com/browse,THE BEST,178974,https://groceries.morrisons.com/browse/178974,,,,,,
+,,,,,,,,,
+https://groceries.morrisons.com/browse,THE BEST,178974,https://groceries.morrisons.com/browse/178974,FRESH,178969,https://groceries.morrisons.com/browse/178974/178969,,,
+https://groceries.morrisons.com/browse,THE BEST,178974,https://groceries.morrisons.com/browse/178974,FRESH,178969,https://groceries.morrisons.com/browse/178974/178969,CHEESE,178975,https://groceries.morrisons.com/browse/178974/178969/178975
+https://groceries.morrisons.com/browse,THE BEST,178974,https://groceries.morrisons.com/browse/178974,FRESH,178969,https://groceries.morrisons.com/browse/178974/178969,COOKED MEAT & ANTIPASTI,178976,https://groceries.morrisons.com/browse/178974/178969/178976
+https://groceries.morrisons.com/browse,THE BEST,178974,https://groceries.morrisons.com/browse/178974,FRESH,178969,https://groceries.morrisons.com/browse/178974/178969,DAIRY & EGGS,178977,https://groceries.morrisons.com/browse/178974/178969/178977
+https://groceries.morrisons.com/browse,THE BEST,178974,https://groceries.morrisons.com/browse/178974,FRESH,178969,https://groceries.morrisons.com/browse/178974/178969,DESSERTS,178978,https://groceries.morrisons.com/browse/178974/178969/178978
+https://groceries.morrisons.com/browse,THE BEST,178974,https://groceries.morrisons.com/browse/178974,FRESH,178969,https://groceries.morrisons.com/browse/178974/178969,DRINKS,178979,https://groceries.morrisons.com/browse/178974/178969/178979
+"""

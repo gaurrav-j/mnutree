@@ -3,6 +3,7 @@
    The file can be uploaded from the swagger-ui
 """
 
+import os
 from typing import List, TextIO, Dict, Union, Any
 
 from fastapi.applications import FastAPI

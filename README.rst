@@ -23,6 +23,16 @@ The project can be installed to the python virtual environment or python host wi
 For example say **path-to-mnutree** is user's download folder at ``~/Downloads``.
 The following can be executed.
 
+with python
+-----------
+  ``$ cd  ~/Downloads/mnutree/``
+
+  ``$ python setup.py install``
+
+with pip
+---------
+  ``$ pip install -e ~/Downloads/mnutree``
+
 for pytest
 ----------
   ``$ cd ~/Downloads/mnutree``
@@ -34,6 +44,12 @@ for pytest
   **or**
 
   ``$ py.test -s --cov tests/``
+
+  **or**
+
+  ``$ coverage run --source mnutree,mnuapi -m pytest``
+
+  ``$ coverage report``
 
   **for BDD testing**
 
@@ -57,17 +73,8 @@ for type checking
 
   ``$ mypy --ignore-missing-imports tests/``
 
-with python
------------
-  ``$ cd  ~/Downloads/mnutree/``
 
-  ``$ python setup.py install``
-
-with pip
----------
-  ``$ pip install -e ~/Downloads/mnutree``
-
-This will install the command `mnutree`. Please type `mnutree -h` to see the options as:-
+The ``$ python setup.py install`` will install the commands `mnutree` & `mnuapi`. Please type `mnutree -h` to see the options as:-
 -----------------------------------------------------------------------------------------
 usage: mnutree [-h] [--version] [-v] [-vv] [FILE]
 
@@ -86,13 +93,16 @@ example
 -------
   ``$ mnutree -v``
 
-The ``pwd`` / current directory should have **data.csv** file. The **mnutree** command takes the csv file as option
+  The ``pwd`` / current directory should have **data.csv** file. The **mnutree** command takes the csv file as option
 
   ``$ mnutree -v ~/Downloads/data.csv``
 
   **or**
 
   ``$ mnutree -v ~/Downloads/xyz.csv``
+
+  ``$ **mnuapi -v**'' will start the api server. The swagger-ui is located at http://127.0.0.1:5000
+  Please press Ctrl+c to quit the server
 
 Docker Local & Production
 =========================

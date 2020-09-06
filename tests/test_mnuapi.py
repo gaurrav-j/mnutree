@@ -6,16 +6,16 @@ import pytest
 from httpx import AsyncClient
 
 from mnuapi import app
+from mnuapi import health
 
 @pytest.mark.asyncio
 async def test_health():
     """The method to test the health of
        file processing api
     """
-    async with AsyncClient(app=app, base_url="http://test") as async_client:
-        response = await async_client.get("/health")
-    assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+    response = health()
+    assert response
+    assert {'status': 'ok'} == response
 
 @pytest.mark.asyncio
 async def test_accept_file():
