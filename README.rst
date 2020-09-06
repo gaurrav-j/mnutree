@@ -101,7 +101,7 @@ example
 
   ``$ mnutree -v ~/Downloads/xyz.csv``
 
-  ``$ **mnuapi -v**`` will start the api server. The swagger-ui is located at http://127.0.0.1:5000/docs
+  ``$ mnuapi -v`` will start the api server. The swagger-ui is located at http://127.0.0.1:5000/docs
   Please press Ctrl+c to quit the server
 
 Docker Local & Production
