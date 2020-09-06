@@ -14,9 +14,26 @@ Python 3.8 (>3.8)
 PyScaffold 3.2.3
 
 The project can be installed to the python virtual environment or python host with command
+
   ``python setup.py install``
 
+  This will install the commands to local system
+
+  **for distrubation**
+
+  ``pip install wheel``
+
+  ``python setup.py dists``
+
+  This will create a .whl distrubation under dist/ directory
+
+  ``pip install dist/*.whl``
+
+  This will install the commands to local system
+
   **for development purpose**
+
+  ``pip install -r requirements.txt``
 
   ``pip install -e <path-to-mnutree>``
 
